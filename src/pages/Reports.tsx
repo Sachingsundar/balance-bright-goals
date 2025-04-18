@@ -20,7 +20,7 @@ import {
 } from 'recharts';
 import { useBudget } from '@/contexts/BudgetContext';
 import { 
-  FileChart, 
+  BarChartIcon, 
   FileText, 
   ChartPie, 
   BarChart3, 
@@ -48,7 +48,7 @@ const Reports: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
       <div className="flex items-center space-x-4 mb-6">
-        <FileChart className="h-8 w-8 text-primary" />
+        <BarChartIcon className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold">Financial Reports</h1>
       </div>
 
