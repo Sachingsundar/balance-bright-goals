@@ -30,9 +30,11 @@ const DashboardHeader: React.FC = () => {
             </Button>
           </li>
           <li>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>Budget</span>
+            <Button variant="ghost" className="flex items-center gap-2" asChild>
+              <Link to="/budget">
+                <Calendar className="h-4 w-4" />
+                <span>Budget</span>
+              </Link>
             </Button>
           </li>
         </ul>
