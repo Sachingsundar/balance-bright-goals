@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, CreditCard, Home, PieChart, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const DashboardHeader: React.FC = () => {
   return (
@@ -13,15 +14,19 @@ const DashboardHeader: React.FC = () => {
       <nav className="hidden md:block">
         <ul className="flex items-center gap-4">
           <li>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <Home className="h-4 w-4" />
-              <span>Dashboard</span>
+            <Button variant="ghost" className="flex items-center gap-2" asChild>
+              <Link to="/">
+                <Home className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
             </Button>
           </li>
           <li>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <PieChart className="h-4 w-4" />
-              <span>Reports</span>
+            <Button variant="ghost" className="flex items-center gap-2" asChild>
+              <Link to="/reports">
+                <PieChart className="h-4 w-4" />
+                <span>Reports</span>
+              </Link>
             </Button>
           </li>
           <li>

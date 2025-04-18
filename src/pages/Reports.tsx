@@ -1,0 +1,162 @@
+
+import React from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer,
+  PieChart, 
+  Pie, 
+  Cell,
+  Legend
+} from 'recharts';
+import { useBudget } from '@/contexts/BudgetContext';
+import { 
+  FileChart, 
+  FileText, 
+  ChartPie, 
+  BarChart3, 
+  TrendingDown, 
+  TrendingUp 
+} from 'lucide-react';
+import { CATEGORIES } from '@/types/budget';
+
+const Reports: React.FC = () => {
+  const { budgets, transactions, monthlyData } = useBudget();
+
+  // Prepare data for category spending pie chart
+  const categorySpendingData = budgets.map((budget) => ({
+    name: CATEGORIES[budget.category].label,
+    value: budget.spent,
+    color: `var(--expense-${budget.category})`,
+  }));
+
+  // Prepare data for monthly income vs expenses
+  const incomeExpensesData = monthlyData.map((data) => ({
+    ...data,
+    netAmount: data.income - data.expenses,
+  }));
+
+  return (
+    <div className="min-h-screen flex flex-col p-6 space-y-6">
+      <div className="flex items-center space-x-4 mb-6">
+        <FileChart className="h-8 w-8 text-primary" />
+        <h1 className="text-3xl font-bold">Financial Reports</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Category Spending Breakdown */}
+        <Card className="dashboard-card">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <ChartPie className="mr-2 h-5 w-5" />
+              Category Spending
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={categorySpendingData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {categorySpendingData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Monthly Income vs Expenses */}
+        <Card className="dashboard-card">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BarChart3 className="mr-2 h-5 w-5" />
+              Monthly Financial Trends
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={incomeExpensesData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="income" name="Income" fill="var(--success)" />
+                <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" />
+                <Bar dataKey="netAmount" name="Net Amount" fill="var(--primary)" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Transactions */}
+      <Card className="dashboard-card">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <FileText className="mr-2 h-5 w-5" />
+            Recent Transactions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {transactions.slice(0, 10).map((transaction) => {
+              const category = CATEGORIES[transaction.category];
+              return (
+                <div 
+                  key={transaction.id} 
+                  className="flex items-center justify-between border-b px-4 py-3 last:border-0"
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="flex h-10 w-10 items-center justify-center rounded-full"
+                      style={{ backgroundColor: `var(--${category.color})` }}
+                    >
+                      <span className="text-white text-xs">{category.label.substring(0, 1)}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{transaction.description}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(transaction.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-medium ${transaction.amount > 0 ? 'text-success' : 'text-destructive'}`}>
+                      ${transaction.amount.toFixed(2)}
+                    </span>
+                    {transaction.amount > 0 ? (
+                      <TrendingUp className="h-4 w-4 text-success" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4 text-destructive" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default Reports;
