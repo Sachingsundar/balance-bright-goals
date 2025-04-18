@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Home, Wallet, BarChart } from 'lucide-react';
-import { useBudget } from '@/contexts/BudgetContext';
+import { useBudget, BudgetProvider } from '@/contexts/BudgetContext';
 import { Category, CATEGORIES } from '@/types/budget';
 import { Link } from 'react-router-dom';
 
