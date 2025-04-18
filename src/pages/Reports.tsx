@@ -28,8 +28,9 @@ import {
   TrendingUp 
 } from 'lucide-react';
 import { CATEGORIES } from '@/types/budget';
+import { BudgetProvider } from '@/contexts/BudgetContext';
 
-const Reports: React.FC = () => {
+const ReportsContent: React.FC = () => {
   const { budgets, transactions, monthlyData } = useBudget();
 
   // Prepare data for category spending pie chart
@@ -156,6 +157,14 @@ const Reports: React.FC = () => {
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+const Reports: React.FC = () => {
+  return (
+    <BudgetProvider>
+      <ReportsContent />
+    </BudgetProvider>
   );
 };
 
