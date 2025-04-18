@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card, 
@@ -25,22 +24,24 @@ import {
   ChartPie, 
   BarChart3, 
   TrendingDown, 
-  TrendingUp 
+  TrendingUp,
+  Home,
+  Wallet
 } from 'lucide-react';
 import { CATEGORIES } from '@/types/budget';
 import { BudgetProvider } from '@/contexts/BudgetContext';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const ReportsContent: React.FC = () => {
   const { budgets, transactions, monthlyData } = useBudget();
 
-  // Prepare data for category spending pie chart
   const categorySpendingData = budgets.map((budget) => ({
     name: CATEGORIES[budget.category].label,
     value: budget.spent,
     color: `var(--expense-${budget.category})`,
   }));
 
-  // Prepare data for monthly income vs expenses
   const incomeExpensesData = monthlyData.map((data) => ({
     ...data,
     netAmount: data.income - data.expenses,
@@ -49,12 +50,27 @@ const ReportsContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
       <div className="flex items-center space-x-4 mb-6">
-        <BarChartIcon className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold">Financial Reports</h1>
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" asChild>
+            <Link to="/">
+              <Home className="mr-2 h-5 w-5" />
+              Home
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link to="/budget">
+              <Wallet className="mr-2 h-5 w-5" />
+              Budget
+            </Link>
+          </Button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <BarChartIcon className="h-8 w-8 text-primary" />
+          <h1 className="text-3xl font-bold">Financial Reports</h1>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Category Spending Breakdown */}
         <Card className="dashboard-card">
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -85,7 +101,6 @@ const ReportsContent: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Monthly Income vs Expenses */}
         <Card className="dashboard-card">
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -109,7 +124,6 @@ const ReportsContent: React.FC = () => {
         </Card>
       </div>
 
-      {/* Recent Transactions */}
       <Card className="dashboard-card">
         <CardHeader>
           <CardTitle className="flex items-center">
