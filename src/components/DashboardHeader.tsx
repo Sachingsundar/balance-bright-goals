@@ -1,10 +1,18 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, BadgeIndianRupee, Home, PieChart, Settings, User, MessageSquare } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const DashboardHeader: React.FC = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/signin');
+  };
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur">
       <div className="flex items-center gap-2">
@@ -48,14 +56,22 @@ const DashboardHeader: React.FC = () => {
         </ul>
       </nav>
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" asChild>
-          <Link to="/signin">
-            <User className="h-4 w-4" />
-          </Link>
-        </Button>
-        <Button variant="outline" size="icon">
-          <Settings className="h-4 w-4" />
-        </Button>
+        {user ? (
+          <>
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+            <Button variant="outline" size="icon">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </>
+        ) : (
+          <Button variant="outline" size="icon" asChild>
+            <Link to="/signin">
+              <User className="h-4 w-4" />
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );
