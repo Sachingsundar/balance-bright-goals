@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBudget } from '@/contexts/BudgetContext';
 import { CATEGORIES } from '@/types/budget';
+import { formatCurrency } from '@/utils/currency';
 
 const TransactionHistory: React.FC = () => {
   const { transactions } = useBudget();
@@ -41,7 +42,7 @@ const TransactionHistory: React.FC = () => {
                     <p className="text-xs text-muted-foreground">{formatDate(transaction.date)}</p>
                   </div>
                 </div>
-                <span className="font-medium">${transaction.amount.toFixed(2)}</span>
+                <span className="font-medium">{formatCurrency(transaction.amount)}</span>
               </div>
             );
           })}

@@ -3,21 +3,12 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useBudget } from '@/contexts/BudgetContext';
-import { ArrowDownRight, ArrowUpRight, DollarSign } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, BadgeIndianRupee } from 'lucide-react';
+import { formatCurrency } from '@/utils/currency';
 
 const BudgetSummary: React.FC = () => {
   const { totalBudget, totalSpent, totalRemaining } = useBudget();
   const percentSpent = Math.round((totalSpent / totalBudget) * 100);
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -27,7 +18,7 @@ const BudgetSummary: React.FC = () => {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Total Budget</span>
               <div className="rounded-full bg-primary/10 p-1">
-                <DollarSign className="h-4 w-4 text-primary" />
+                <BadgeIndianRupee className="h-4 w-4 text-primary" />
               </div>
             </div>
             <div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Card, 
@@ -32,6 +33,7 @@ import { CATEGORIES } from '@/types/budget';
 import { BudgetProvider } from '@/contexts/BudgetContext';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { formatCurrency } from '@/utils/currency';
 
 const ReportsContent: React.FC = () => {
   const { budgets, transactions, monthlyData } = useBudget();
@@ -94,7 +96,7 @@ const ReportsContent: React.FC = () => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value) => formatCurrency(value as number)} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -113,7 +115,7 @@ const ReportsContent: React.FC = () => {
               <BarChart data={incomeExpensesData}>
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip formatter={(value) => formatCurrency(value as number)} />
                 <Legend />
                 <Bar dataKey="income" name="Income" fill="var(--success)" />
                 <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" />
@@ -156,7 +158,7 @@ const ReportsContent: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-medium ${transaction.amount > 0 ? 'text-success' : 'text-destructive'}`}>
-                      ${transaction.amount.toFixed(2)}
+                      {formatCurrency(transaction.amount)}
                     </span>
                     {transaction.amount > 0 ? (
                       <TrendingUp className="h-4 w-4 text-success" />

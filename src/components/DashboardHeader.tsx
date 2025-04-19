@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, CreditCard, Home, PieChart, Settings } from 'lucide-react';
+import { Calendar, BadgeIndianRupee, Home, PieChart, Settings, User, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const DashboardHeader: React.FC = () => {
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur">
       <div className="flex items-center gap-2">
-        <CreditCard className="h-6 w-6 text-primary" />
+        <BadgeIndianRupee className="h-6 w-6 text-primary" />
         <h1 className="text-xl font-semibold">Balance Bright</h1>
       </div>
       <nav className="hidden md:block">
@@ -37,11 +37,26 @@ const DashboardHeader: React.FC = () => {
               </Link>
             </Button>
           </li>
+          <li>
+            <Button variant="ghost" className="flex items-center gap-2" asChild>
+              <Link to="/feedback">
+                <MessageSquare className="h-4 w-4" />
+                <span>Feedback</span>
+              </Link>
+            </Button>
+          </li>
         </ul>
       </nav>
-      <Button variant="outline" size="icon" className="ml-auto md:ml-0">
-        <Settings className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="icon" asChild>
+          <Link to="/signin">
+            <User className="h-4 w-4" />
+          </Link>
+        </Button>
+        <Button variant="outline" size="icon">
+          <Settings className="h-4 w-4" />
+        </Button>
+      </div>
     </header>
   );
 };

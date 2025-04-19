@@ -9,9 +9,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Home, Wallet, BarChart } from 'lucide-react';
-import { useBudget, BudgetProvider } from '@/contexts/BudgetContext';
+import { useBudget } from '@/contexts/BudgetContext';
 import { Category, CATEGORIES } from '@/types/budget';
 import { Link } from 'react-router-dom';
+import { BudgetProvider } from '@/contexts/BudgetContext';
+import { formatCurrency } from '@/utils/currency';
 
 const BudgetContent: React.FC = () => {
   const { budgets, updateBudget } = useBudget();
@@ -61,7 +63,7 @@ const BudgetContent: React.FC = () => {
                     <span>{category.label}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    ${budget.spent} spent of ${budget.amount}
+                    {formatCurrency(budget.spent)} spent of {formatCurrency(budget.amount)}
                   </span>
                 </CardTitle>
               </CardHeader>
