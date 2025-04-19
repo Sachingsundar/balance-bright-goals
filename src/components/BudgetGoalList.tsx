@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useBudget } from '@/contexts/BudgetContext';
 import { CATEGORIES } from '@/types/budget';
+import { formatCurrency } from '@/utils/currency';
 
 const BudgetGoalList: React.FC = () => {
   const { budgets } = useBudget();
@@ -30,7 +31,7 @@ const BudgetGoalList: React.FC = () => {
                     <span className="text-sm font-medium">{category.label}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    ${budget.spent} / ${budget.amount}
+                    {formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
