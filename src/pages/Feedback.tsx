@@ -14,10 +14,11 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Link } from 'react-router-dom';
 import { BadgeIndianRupee, Star, MessageSquare, ArrowLeft } from 'lucide-react';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -41,17 +42,32 @@ const Feedback: React.FC = () => {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-    // In a real app, this would submit to an API
-    console.log("Feedback submitted:", data);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .insert([
+          { 
+            content: JSON.stringify({
+              name: data.name,
+              email: data.email,
+              rating: data.rating,
+              feedback: data.feedback
+            })
+          }
+        ]);
+
+      if (error) throw error;
+
       toast.success("Thank you for your feedback!");
       form.reset();
-    }, 1500);
+    } catch (error) {
+      console.error('Error saving feedback:', error);
+      toast.error("Failed to submit feedback. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
