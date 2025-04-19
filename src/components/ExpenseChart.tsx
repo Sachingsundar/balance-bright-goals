@@ -1,31 +1,49 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, Legend, TooltipProps } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, TooltipProps } from 'recharts';
 import { useBudget } from '@/contexts/BudgetContext';
 import { CATEGORIES } from '@/types/budget';
+import { formatCurrency } from '@/utils/currency';
 
 const RADIAN = Math.PI / 180;
+const COLORS = ['#9b87f5', '#7E69AB', '#6E59A5', '#F97316', '#0EA5E9', '#D946EF', '#ea384c'];
 
 const ExpenseChart: React.FC = () => {
   const { budgets, monthlyData } = useBudget();
 
-  const categoryData = budgets.map((budget) => ({
-    name: CATEGORIES[budget.category].label,
-    value: budget.spent,
-    color: `var(--expense-${budget.category})`,
-  }));
+  const categoryData = budgets
+    .filter(budget => budget.spent > 0) // Only show categories with spending
+    .map((budget) => ({
+      name: CATEGORIES[budget.category].label,
+      value: budget.spent,
+      color: `var(--expense-${budget.category})`,
+    }));
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const renderCustomizedLabel = ({ 
+    cx, 
+    cy, 
+    midAngle, 
+    innerRadius, 
+    outerRadius, 
+    percent, 
+    index 
+  }: any) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
   
-    return (
-      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
+    return percent * 100 > 5 ? (
+      <text 
+        x={x} 
+        y={y} 
+        fill="white" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+      >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
-    );
+    ) : null;
   };
 
   const CustomTooltip = ({
@@ -36,7 +54,7 @@ const ExpenseChart: React.FC = () => {
       return (
         <div className="bg-background p-2 border rounded shadow text-sm">
           <p className="font-medium">{`${payload[0].name}`}</p>
-          <p className="text-muted-foreground">{`$${payload[0].value}`}</p>
+          <p className="text-muted-foreground">{formatCurrency(payload[0].value as number)}</p>
         </div>
       );
     }
@@ -58,12 +76,18 @@ const ExpenseChart: React.FC = () => {
                 cy="50%"
                 labelLine={false}
                 label={renderCustomizedLabel}
-                outerRadius={80}
+                outerRadius={90}
+                innerRadius={60}
                 fill="#8884d8"
+                paddingAngle={2}
                 dataKey="value"
               >
                 {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]}
+                    strokeWidth={0}
+                  />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
@@ -82,17 +106,30 @@ const ExpenseChart: React.FC = () => {
             <BarChart
               data={monthlyData}
               margin={{
-                top: 10,
-                right: 10,
-                left: 0,
-                bottom: 30,
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
               }}
             >
               <XAxis dataKey="month" />
+              <YAxis 
+                tickFormatter={(value) => formatCurrency(value).split('.')[0]}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
-              <Bar dataKey="income" name="Income" fill="var(--success)" />
-              <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" />
+              <Bar 
+                dataKey="income" 
+                name="Income" 
+                fill="var(--success)" 
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar 
+                dataKey="expenses" 
+                name="Expenses" 
+                fill="var(--destructive)" 
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
