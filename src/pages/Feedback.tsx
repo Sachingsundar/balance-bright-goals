@@ -45,9 +45,10 @@ const Feedback: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      // Log what we're trying to insert to help with debugging
+      // Enhanced logging for debugging
       console.log('Attempting to insert feedback:', data);
       
+      // Convert rating to number for storage
       const { error } = await supabase
         .from('feedback')
         .insert([
@@ -55,21 +56,22 @@ const Feedback: React.FC = () => {
             content: JSON.stringify({
               name: data.name,
               email: data.email,
-              rating: data.rating,
+              rating: Number(data.rating),
               feedback: data.feedback
             })
           }
         ]);
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Detailed Supabase error:', error);
+        toast.error(`Failed to submit feedback: ${error.message}`);
         throw error;
       }
 
       toast.success("Thank you for your feedback!");
       form.reset();
     } catch (error) {
-      console.error('Error saving feedback:', error);
+      console.error('Complete submission error:', error);
       toast.error("Failed to submit feedback. Please try again.");
     } finally {
       setIsLoading(false);
