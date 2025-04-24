@@ -45,6 +45,9 @@ const Feedback: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
+      // Log what we're trying to insert to help with debugging
+      console.log('Attempting to insert feedback:', data);
+      
       const { error } = await supabase
         .from('feedback')
         .insert([
@@ -58,7 +61,10 @@ const Feedback: React.FC = () => {
           }
         ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast.success("Thank you for your feedback!");
       form.reset();
