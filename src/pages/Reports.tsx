@@ -69,6 +69,23 @@ const ReportsContent: React.FC = () => {
     return null;
   };
 
+  // Custom legend renderer for dark mode
+  const CustomLegend = ({ payload }: any) => {
+    return (
+      <div className="flex justify-center items-center space-x-4 dark:text-white/80">
+        {payload.map((entry: any, index: number) => (
+          <div key={`item-${index}`} className="flex items-center space-x-1">
+            <div 
+              className="w-3 h-3 rounded-sm" 
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-sm">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
       <div className="flex items-center space-x-4 mb-6">
@@ -117,7 +134,10 @@ const ReportsContent: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
-                <Legend />
+                <Legend 
+                  content={CustomLegend} 
+                  className="dark:text-white/80"
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -132,22 +152,31 @@ const ReportsContent: React.FC = () => {
           </CardHeader>
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={incomeExpensesData} 
-                // Add dark mode friendly color theme
-                className="dark:text-white"
+              <BarChart 
+                data={incomeExpensesData} 
+                className="dark:text-white/80"
               >
                 <XAxis 
                   dataKey="month" 
-                  className="dark:text-white" 
-                  tick={{ fill: 'currentColor' }} 
+                  className="dark:text-white/80" 
+                  tick={{ 
+                    fill: 'currentColor', 
+                    className: 'dark:text-white/80' 
+                  }} 
                 />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value).split('.')[0]} 
-                  className="dark:text-white" 
-                  tick={{ fill: 'currentColor' }} 
+                  className="dark:text-white/80" 
+                  tick={{ 
+                    fill: 'currentColor', 
+                    className: 'dark:text-white/80' 
+                  }} 
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend />
+                <Legend 
+                  content={CustomLegend} 
+                  className="dark:text-white/80"
+                />
                 <Bar 
                   dataKey="income" 
                   name="Income" 
