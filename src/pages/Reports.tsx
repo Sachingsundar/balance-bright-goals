@@ -49,6 +49,26 @@ const ReportsContent: React.FC = () => {
     netAmount: data.income - data.expenses,
   }));
 
+  // Custom tooltip for better dark mode visibility
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-popover text-popover-foreground p-4 rounded-lg shadow-lg border">
+          <div className="flex justify-between items-center mb-2">
+            <span className="font-semibold">{payload[0].name}</span>
+          </div>
+          {payload.map((item: any, index: number) => (
+            <div key={index} className="flex justify-between">
+              <span className="mr-4 text-muted-foreground">{item.dataKey}</span>
+              <span className="font-bold">{formatCurrency(item.value)}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
       <div className="flex items-center space-x-4 mb-6">
@@ -96,7 +116,7 @@ const ReportsContent: React.FC = () => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -112,14 +132,40 @@ const ReportsContent: React.FC = () => {
           </CardHeader>
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={incomeExpensesData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => formatCurrency(value as number)} />
+              <BarChart data={incomeExpensesData} 
+                // Add dark mode friendly color theme
+                className="dark:text-white"
+              >
+                <XAxis 
+                  dataKey="month" 
+                  className="dark:text-white" 
+                  tick={{ fill: 'currentColor' }} 
+                />
+                <YAxis 
+                  tickFormatter={(value) => formatCurrency(value).split('.')[0]} 
+                  className="dark:text-white" 
+                  tick={{ fill: 'currentColor' }} 
+                />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
-                <Bar dataKey="income" name="Income" fill="var(--success)" />
-                <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" />
-                <Bar dataKey="netAmount" name="Net Amount" fill="var(--primary)" />
+                <Bar 
+                  dataKey="income" 
+                  name="Income" 
+                  fill="var(--success)" 
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar 
+                  dataKey="expenses" 
+                  name="Expenses" 
+                  fill="var(--destructive)" 
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar 
+                  dataKey="netAmount" 
+                  name="Net Amount" 
+                  fill="var(--primary)" 
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
