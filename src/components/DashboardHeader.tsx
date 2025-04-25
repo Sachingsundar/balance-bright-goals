@@ -1,12 +1,17 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, BadgeIndianRupee, Home, PieChart, Settings, User, MessageSquare } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { BadgeIndianRupee, Home, PieChart, Settings, User, MessageSquare } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 
 const DashboardHeader: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
 
   const handleSignOut = async () => {
     await signOut();
@@ -22,7 +27,13 @@ const DashboardHeader: React.FC = () => {
       <nav className="hidden md:block">
         <ul className="flex items-center gap-4">
           <li>
-            <Button variant="ghost" className="flex items-center gap-2" asChild>
+            <Button 
+              variant={isActive('/') ? 'default' : 'ghost'} 
+              className={cn("flex items-center gap-2", 
+                isActive('/') && "bg-primary text-primary-foreground"
+              )} 
+              asChild
+            >
               <Link to="/">
                 <Home className="h-4 w-4" />
                 <span>Dashboard</span>
@@ -30,7 +41,13 @@ const DashboardHeader: React.FC = () => {
             </Button>
           </li>
           <li>
-            <Button variant="ghost" className="flex items-center gap-2" asChild>
+            <Button 
+              variant={isActive('/reports') ? 'default' : 'ghost'} 
+              className={cn("flex items-center gap-2",
+                isActive('/reports') && "bg-primary text-primary-foreground"
+              )} 
+              asChild
+            >
               <Link to="/reports">
                 <PieChart className="h-4 w-4" />
                 <span>Reports</span>
@@ -38,15 +55,27 @@ const DashboardHeader: React.FC = () => {
             </Button>
           </li>
           <li>
-            <Button variant="ghost" className="flex items-center gap-2" asChild>
+            <Button 
+              variant={isActive('/budget') ? 'default' : 'ghost'} 
+              className={cn("flex items-center gap-2",
+                isActive('/budget') && "bg-primary text-primary-foreground"
+              )} 
+              asChild
+            >
               <Link to="/budget">
-                <Calendar className="h-4 w-4" />
+                <Home className="h-4 w-4" />
                 <span>Budget</span>
               </Link>
             </Button>
           </li>
           <li>
-            <Button variant="ghost" className="flex items-center gap-2" asChild>
+            <Button 
+              variant={isActive('/feedback') ? 'default' : 'ghost'} 
+              className={cn("flex items-center gap-2",
+                isActive('/feedback') && "bg-primary text-primary-foreground"
+              )} 
+              asChild
+            >
               <Link to="/feedback">
                 <MessageSquare className="h-4 w-4" />
                 <span>Feedback</span>
