@@ -108,6 +108,23 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const deleteTransaction = (id: string) => {
+    const transactionToDelete = transactions.find(t => t.id === id);
+    if (!transactionToDelete) return;
+
+    // Remove the transaction
+    setTransactions(transactions.filter(t => t.id !== id));
+    
+    // Update the spent amount for the category
+    setBudgets(
+      budgets.map((budget) =>
+        budget.category === transactionToDelete.category
+          ? { ...budget, spent: budget.spent - transactionToDelete.amount }
+          : budget
+      )
+    );
+  };
+
   const updateBudget = (category: Category, amount: number) => {
     setBudgets(
       budgets.map((budget) =>
@@ -128,6 +145,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         totalSpent,
         totalRemaining,
         addTransaction,
+        deleteTransaction,
         updateBudget,
       }}
     >
