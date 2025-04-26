@@ -29,7 +29,8 @@ const ReportsContent: React.FC = () => {
     toast({
       title: "Transaction deleted",
       description: "Your transaction has been successfully deleted",
-      variant: "success",
+      // Changed variant from "success" to "default" to fix the type error
+      variant: "default",
     });
   };
 

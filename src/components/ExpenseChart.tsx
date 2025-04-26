@@ -95,7 +95,7 @@ const ExpenseChart: React.FC = () => {
                 layout="horizontal"
                 verticalAlign="bottom"
                 align="center"
-                wrapperStyle={{ paddingTop: "20px" }}
+                wrapperStyle={{ paddingTop: "20px", marginBottom: "-15px" }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -126,7 +126,7 @@ const ExpenseChart: React.FC = () => {
                 layout="horizontal"
                 verticalAlign="bottom"
                 align="center"
-                wrapperStyle={{ paddingBottom: "10px" }}
+                wrapperStyle={{ paddingBottom: "10px", marginTop: "5px" }}
               />
               <Bar 
                 dataKey="income" 
