@@ -1,10 +1,9 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useBudget } from '@/contexts/BudgetContext';
 import { BudgetProvider } from '@/contexts/BudgetContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ChartPie, BarChart3, FileText, Home, Wallet } from 'lucide-react';
+import { ChartPie, BarChart3, FileText, Home, Wallet, FileJson } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CATEGORIES } from '@/types/budget';
@@ -15,6 +14,7 @@ import { Trash2 } from 'lucide-react';
 
 const ReportsContent: React.FC = () => {
   const { budgets, transactions, monthlyData, deleteTransaction } = useBudget();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const categoryData = budgets
     .filter(budget => budget.spent > 0)
@@ -29,14 +29,55 @@ const ReportsContent: React.FC = () => {
     toast({
       title: "Transaction deleted",
       description: "Your transaction has been successfully deleted",
-      // Changed variant from "success" to "default" to fix the type error
       variant: "default",
     });
   };
 
+  const generateAIReport = async () => {
+    setIsGenerating(true);
+    try {
+      const totalSpent = budgets.reduce((acc, budget) => acc + budget.spent, 0);
+      const totalBudget = budgets.reduce((acc, budget) => acc + budget.amount, 0);
+      const topCategory = [...budgets].sort((a, b) => b.spent - a.spent)[0];
+      const overBudgetCategories = budgets.filter(b => b.spent > b.amount);
+      
+      const response = await fetch('/api/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Create a concise financial summary report based on these stats:
+          - Total spent: ${formatCurrency(totalSpent)}
+          - Total budget: ${formatCurrency(totalBudget)}
+          - Top spending category: ${CATEGORIES[topCategory.category].label} (${formatCurrency(topCategory.spent)})
+          - Number of categories over budget: ${overBudgetCategories.length}
+          - Latest transactions: ${transactions.slice(0, 3).map(t => 
+            `${CATEGORIES[t.category].label}: ${formatCurrency(t.amount)}`).join(', ')}
+          `
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to generate report');
+      
+      const data = await response.json();
+      toast({
+        title: "Financial Summary Report",
+        description: data.generatedText,
+        duration: 10000,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate the report. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
-      <div className="flex items-center space-x-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Button variant="ghost" asChild>
             <Link to="/">
@@ -51,9 +92,19 @@ const ReportsContent: React.FC = () => {
             </Link>
           </Button>
         </div>
-        <div className="flex items-center space-x-4">
-          <ChartPie className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">Financial Reports</h1>
+        <div className="flex items-center gap-4">
+          <Button 
+            onClick={generateAIReport} 
+            disabled={isGenerating}
+            className="flex items-center gap-2"
+          >
+            <FileJson className="h-5 w-5" />
+            {isGenerating ? "Generating..." : "Generate Report"}
+          </Button>
+          <div className="flex items-center space-x-4">
+            <ChartPie className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold">Financial Reports</h1>
+          </div>
         </div>
       </div>
       
@@ -182,12 +233,10 @@ const ReportsContent: React.FC = () => {
   );
 };
 
-const Reports: React.FC = () => {
-  return (
-    <BudgetProvider>
-      <ReportsContent />
-    </BudgetProvider>
-  );
-};
+const Reports: React.FC = () => (
+  <BudgetProvider>
+    <ReportsContent />
+  </BudgetProvider>
+);
 
 export default Reports;
