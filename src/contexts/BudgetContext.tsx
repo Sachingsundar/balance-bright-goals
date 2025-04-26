@@ -66,6 +66,7 @@ interface BudgetContextType {
   totalSpent: number;
   totalRemaining: number;
   addTransaction: (transaction: Omit<Transaction, "id">) => void;
+  deleteTransaction: (id: string) => void;
   updateBudget: (category: Category, amount: number) => void;
 }
 
