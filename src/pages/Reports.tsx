@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { CATEGORIES } from '@/types/budget';
 import { formatCurrency } from '@/utils/currency';
 import { CustomTooltip, CustomLegend } from '../components/charts/ChartComponents';
+import { toast } from '@/components/ui/use-toast';
+import { Trash2 } from 'lucide-react';
 
 const ReportsContent: React.FC = () => {
-  const { budgets, transactions, monthlyData } = useBudget();
+  const { budgets, transactions, monthlyData, deleteTransaction } = useBudget();
 
   const categoryData = budgets
     .filter(budget => budget.spent > 0)
@@ -21,6 +23,15 @@ const ReportsContent: React.FC = () => {
       value: budget.spent,
       color: `var(--expense-${budget.category})`,
     }));
+
+  const handleDeleteTransaction = (id: string) => {
+    deleteTransaction(id);
+    toast({
+      title: "Transaction deleted",
+      description: "Your transaction has been successfully deleted",
+      variant: "success",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
@@ -70,7 +81,12 @@ const ReportsContent: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
-                <Legend content={<CustomLegend />} className="dark:text-white/80" />
+                <Legend 
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{ paddingTop: "20px" }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -85,22 +101,27 @@ const ReportsContent: React.FC = () => {
           </CardHeader>
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData} className="dark:text-white/80">
+              <BarChart 
+                data={monthlyData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+              >
                 <XAxis 
                   dataKey="month" 
-                  className="dark:text-white/80" 
-                  tick={{ fill: 'currentColor', className: 'dark:text-white/80' }} 
+                  tick={{ fill: 'currentColor' }}
                 />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value).split('.')[0]} 
-                  className="dark:text-white/80" 
-                  tick={{ fill: 'currentColor', className: 'dark:text-white/80' }} 
+                  tick={{ fill: 'currentColor' }}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend content={<CustomLegend />} className="dark:text-white/80" />
+                <Legend 
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{ paddingBottom: "10px" }}
+                />
                 <Bar dataKey="income" name="Income" fill="var(--success)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="netAmount" name="Net Amount" fill="var(--primary)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -121,7 +142,7 @@ const ReportsContent: React.FC = () => {
               return (
                 <div 
                   key={transaction.id} 
-                  className="flex items-center justify-between border-b px-4 py-3 last:border-0"
+                  className="flex items-center justify-between border-b px-4 py-3 last:border-0 group"
                 >
                   <div className="flex items-center gap-3">
                     <div 
@@ -141,6 +162,14 @@ const ReportsContent: React.FC = () => {
                     <span className={`font-medium ${transaction.amount > 0 ? 'text-success' : 'text-destructive'}`}>
                       {formatCurrency(transaction.amount)}
                     </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteTransaction(transaction.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 </div>
               );

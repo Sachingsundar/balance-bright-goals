@@ -91,7 +91,12 @@ const ExpenseChart: React.FC = () => {
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
-              <Legend />
+              <Legend 
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: "20px" }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>
@@ -109,7 +114,7 @@ const ExpenseChart: React.FC = () => {
                 top: 20,
                 right: 30,
                 left: 20,
-                bottom: 5,
+                bottom: 40,
               }}
             >
               <XAxis dataKey="month" />
@@ -117,7 +122,12 @@ const ExpenseChart: React.FC = () => {
                 tickFormatter={(value) => formatCurrency(value).split('.')[0]}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Legend />
+              <Legend 
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingBottom: "10px" }}
+              />
               <Bar 
                 dataKey="income" 
                 name="Income" 
