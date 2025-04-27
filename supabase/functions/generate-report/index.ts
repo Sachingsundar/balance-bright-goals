@@ -34,6 +34,11 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      console.error('OpenAI API error:', await response.text());
+      throw new Error(`OpenAI API responded with status: ${response.status}`);
+    }
+
     const data = await response.json();
     const generatedText = data.choices[0].message.content;
 
@@ -44,7 +49,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to generate report' }),
+      JSON.stringify({ error: error.message || 'Failed to generate report' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }

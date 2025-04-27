@@ -8,6 +8,7 @@ import ReportsHeader from '@/components/reports/ReportsHeader';
 import RecentTransactions from '@/components/reports/RecentTransactions';
 import { CATEGORIES } from '@/types/budget';
 import { formatCurrency } from '@/utils/currency';
+import { supabase } from '@/integrations/supabase/client';
 
 const ReportsContent: React.FC = () => {
   const { budgets, transactions, deleteTransaction } = useBudget();
@@ -30,10 +31,9 @@ const ReportsContent: React.FC = () => {
       const topCategory = [...budgets].sort((a, b) => b.spent - a.spent)[0];
       const overBudgetCategories = budgets.filter(b => b.spent > b.amount);
       
-      const response = await fetch('/api/generate-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // Call the Supabase edge function directly instead of using a relative path
+      const { data, error } = await supabase.functions.invoke('generate-report', {
+        body: {
           prompt: `Create a concise financial summary report based on these stats:
           - Total spent: ${formatCurrency(totalSpent)}
           - Total budget: ${formatCurrency(totalBudget)}
@@ -42,18 +42,18 @@ const ReportsContent: React.FC = () => {
           - Latest transactions: ${transactions.slice(0, 3).map(t => 
             `${CATEGORIES[t.category].label}: ${formatCurrency(t.amount)}`).join(', ')}
           `
-        })
+        }
       });
 
-      if (!response.ok) throw new Error('Failed to generate report');
+      if (error) throw error;
       
-      const data = await response.json();
       toast({
         title: "Financial Summary Report",
         description: data.generatedText,
         duration: 10000,
       });
     } catch (error) {
+      console.error("Error generating report:", error);
       toast({
         title: "Error",
         description: "Failed to generate the report. Please try again.",
