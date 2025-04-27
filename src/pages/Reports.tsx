@@ -1,28 +1,17 @@
+
 import React, { useState } from 'react';
 import { useBudget } from '@/contexts/BudgetContext';
 import { BudgetProvider } from '@/contexts/BudgetContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ChartPie, BarChart3, FileText, Home, Wallet, FileJson } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import ExpenseChart from '@/components/ExpenseChart';
+import ReportsHeader from '@/components/reports/ReportsHeader';
+import RecentTransactions from '@/components/reports/RecentTransactions';
 import { CATEGORIES } from '@/types/budget';
 import { formatCurrency } from '@/utils/currency';
-import { CustomTooltip, CustomLegend } from '../components/charts/ChartComponents';
-import { toast } from '@/components/ui/use-toast';
-import { Trash2 } from 'lucide-react';
 
 const ReportsContent: React.FC = () => {
-  const { budgets, transactions, monthlyData, deleteTransaction } = useBudget();
+  const { budgets, transactions, deleteTransaction } = useBudget();
   const [isGenerating, setIsGenerating] = useState(false);
-
-  const categoryData = budgets
-    .filter(budget => budget.spent > 0)
-    .map((budget) => ({
-      name: CATEGORIES[budget.category].label,
-      value: budget.spent,
-      color: `var(--expense-${budget.category})`,
-    }));
 
   const handleDeleteTransaction = (id: string) => {
     deleteTransaction(id);
@@ -77,158 +66,17 @@ const ReportsContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col p-6 space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" asChild>
-            <Link to="/">
-              <Home className="mr-2 h-5 w-5" />
-              Home
-            </Link>
-          </Button>
-          <Button variant="ghost" asChild>
-            <Link to="/budget">
-              <Wallet className="mr-2 h-5 w-5" />
-              Budget
-            </Link>
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button 
-            onClick={generateAIReport} 
-            disabled={isGenerating}
-            className="flex items-center gap-2"
-          >
-            <FileJson className="h-5 w-5" />
-            {isGenerating ? "Generating..." : "Generate Report"}
-          </Button>
-          <div className="flex items-center space-x-4">
-            <ChartPie className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold">Financial Reports</h1>
-          </div>
-        </div>
-      </div>
+      <ReportsHeader 
+        onGenerateReport={generateAIReport}
+        isGenerating={isGenerating}
+      />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="dashboard-card">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <ChartPie className="mr-2 h-5 w-5" />
-              Category Spending
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ paddingTop: "20px" }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="dashboard-card">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <BarChart3 className="mr-2 h-5 w-5" />
-              Monthly Financial Trends
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={monthlyData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-              >
-                <XAxis 
-                  dataKey="month" 
-                  tick={{ fill: 'currentColor' }}
-                />
-                <YAxis 
-                  tickFormatter={(value) => formatCurrency(value).split('.')[0]} 
-                  tick={{ fill: 'currentColor' }}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ paddingBottom: "10px" }}
-                />
-                <Bar dataKey="income" name="Income" fill="var(--success)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expenses" name="Expenses" fill="var(--destructive)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="dashboard-card">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5" />
-            Recent Transactions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {transactions.slice(0, 10).map((transaction) => {
-              const category = CATEGORIES[transaction.category];
-              return (
-                <div 
-                  key={transaction.id} 
-                  className="flex items-center justify-between border-b px-4 py-3 last:border-0 group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="flex h-10 w-10 items-center justify-center rounded-full"
-                      style={{ backgroundColor: `var(--${category.color})` }}
-                    >
-                      <span className="text-white text-xs">{category.label.substring(0, 1)}</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{transaction.description}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(transaction.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-medium ${transaction.amount > 0 ? 'text-success' : 'text-destructive'}`}>
-                      {formatCurrency(transaction.amount)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteTransaction(transaction.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      <ExpenseChart />
+      
+      <RecentTransactions 
+        transactions={transactions}
+        onDeleteTransaction={handleDeleteTransaction}
+      />
     </div>
   );
 };
