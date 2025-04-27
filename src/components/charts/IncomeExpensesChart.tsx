@@ -14,11 +14,11 @@ const IncomeExpensesChart: React.FC<IncomeExpensesChartProps> = ({ monthlyData }
   // If no data, show a message
   if (!monthlyData || monthlyData.length === 0) {
     return (
-      <Card className="dashboard-card h-full animate-in">
+      <Card className="h-full w-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Income vs. Expenses</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[400px]">
           <p className="text-muted-foreground">No monthly data available</p>
         </CardContent>
       </Card>
@@ -26,11 +26,11 @@ const IncomeExpensesChart: React.FC<IncomeExpensesChartProps> = ({ monthlyData }
   }
 
   return (
-    <Card className="dashboard-card h-full animate-in">
+    <Card className="h-full w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Income vs. Expenses</CardTitle>
       </CardHeader>
-      <CardContent className="h-[300px]">
+      <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={monthlyData}
@@ -38,7 +38,7 @@ const IncomeExpensesChart: React.FC<IncomeExpensesChartProps> = ({ monthlyData }
               top: 20,
               right: 30,
               left: 20,
-              bottom: 40,
+              bottom: 60,
             }}
           >
             <XAxis dataKey="month" />

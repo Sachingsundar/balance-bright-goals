@@ -22,11 +22,11 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
   // If no data, show a message
   if (categoryData.length === 0) {
     return (
-      <Card className="dashboard-card h-full animate-in">
+      <Card className="h-full w-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Spending by Category</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[400px]">
           <p className="text-muted-foreground">No spending data available</p>
         </CardContent>
       </Card>
@@ -34,11 +34,11 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
   }
 
   return (
-    <Card className="dashboard-card h-full animate-in">
+    <Card className="h-full w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Spending by Category</CardTitle>
       </CardHeader>
-      <CardContent className="h-[300px]">
+      <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -47,8 +47,8 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
               cy="50%"
               labelLine={false}
               label={renderCustomizedLabel}
-              outerRadius={90}
-              innerRadius={60}
+              outerRadius={120}
+              innerRadius={80}
               fill="#8884d8"
               paddingAngle={2}
               dataKey="value"
@@ -66,7 +66,7 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
               layout="horizontal"
               verticalAlign="bottom"
               align="center"
-              wrapperStyle={{ paddingTop: "20px", marginBottom: "-15px" }}
+              wrapperStyle={{ paddingTop: "20px" }}
             />
           </PieChart>
         </ResponsiveContainer>
