@@ -8,9 +8,13 @@ const ExpenseChart: React.FC = () => {
   const { budgets, monthlyData } = useBudget();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <SpendingPieChart budgets={budgets} />
-      <IncomeExpensesChart monthlyData={monthlyData} />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="h-full min-h-[400px]">
+        <SpendingPieChart budgets={budgets} />
+      </div>
+      <div className="h-full min-h-[400px]">
+        <IncomeExpensesChart monthlyData={monthlyData} />
+      </div>
     </div>
   );
 };

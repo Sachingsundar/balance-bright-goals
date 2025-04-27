@@ -19,12 +19,26 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
       color: `var(--expense-${budget.category})`,
     }));
 
+  // If no data, show a message
+  if (categoryData.length === 0) {
+    return (
+      <Card className="dashboard-card h-full animate-in">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Spending by Category</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <p className="text-muted-foreground">No spending data available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="dashboard-card h-80 animate-in" style={{ animationDelay: '300ms' }}>
+    <Card className="dashboard-card h-full animate-in">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Spending by Category</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

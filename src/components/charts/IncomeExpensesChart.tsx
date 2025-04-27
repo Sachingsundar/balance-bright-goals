@@ -11,12 +11,26 @@ interface IncomeExpensesChartProps {
 }
 
 const IncomeExpensesChart: React.FC<IncomeExpensesChartProps> = ({ monthlyData }) => {
+  // If no data, show a message
+  if (!monthlyData || monthlyData.length === 0) {
+    return (
+      <Card className="dashboard-card h-full animate-in">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Income vs. Expenses</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <p className="text-muted-foreground">No monthly data available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="dashboard-card h-80 animate-in" style={{ animationDelay: '400ms' }}>
+    <Card className="dashboard-card h-full animate-in">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Income vs. Expenses</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={monthlyData}
