@@ -77,10 +77,10 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
   if (categoryData.length === 0) {
     return (
       <Card className="h-full w-full">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-center">Spending by Category</CardTitle>
+        <CardHeader className="pb-4 text-center">
+          <CardTitle className="text-xl font-semibold">Spending by Category</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[350px]">
+        <CardContent className="flex items-center justify-center h-[400px]">
           <div className="text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
               <span className="text-2xl">💰</span>
@@ -95,49 +95,52 @@ const SpendingPieChart: React.FC<SpendingPieChartProps> = ({ budgets }) => {
 
   return (
     <Card className="h-full w-full">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold text-center">Spending by Category</CardTitle>
-        <p className="text-sm text-muted-foreground text-center">
+      <CardHeader className="pb-2 text-center">
+        <CardTitle className="text-xl font-semibold">Spending by Category</CardTitle>
+        <p className="text-sm text-muted-foreground">
           Total spent: {formatCurrency(total)}
         </p>
       </CardHeader>
-      <CardContent className="h-[400px] p-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={dataWithTotal}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={CustomLabel}
-              outerRadius={120}
-              innerRadius={50}
-              paddingAngle={2}
-              dataKey="value"
-              stroke="#ffffff"
-              strokeWidth={2}
-            >
-              {dataWithTotal.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={COLORS[index % COLORS.length]}
-                  className="hover:opacity-80 transition-opacity cursor-pointer"
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              layout="horizontal"
-              verticalAlign="bottom"
-              align="center"
-              wrapperStyle={{ 
-                paddingTop: "20px",
-                fontSize: "14px"
-              }}
-              iconType="circle"
-            />
-          </PieChart>
-        </ResponsiveContainer>
+      <CardContent className="flex flex-col items-center justify-center p-4">
+        <div className="w-full h-[380px] flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={dataWithTotal}
+                cx="50%"
+                cy="45%"
+                labelLine={false}
+                label={CustomLabel}
+                outerRadius={110}
+                innerRadius={45}
+                paddingAngle={2}
+                dataKey="value"
+                stroke="#ffffff"
+                strokeWidth={2}
+              >
+                {dataWithTotal.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]}
+                    className="hover:opacity-80 transition-opacity cursor-pointer"
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ 
+                  paddingTop: "15px",
+                  fontSize: "13px",
+                  textAlign: "center"
+                }}
+                iconType="circle"
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
