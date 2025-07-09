@@ -2,7 +2,6 @@
 import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import BudgetSummary from '@/components/BudgetSummary';
-import ExpenseChart from '@/components/ExpenseChart';
 import BudgetGoalList from '@/components/BudgetGoalList';
 import TransactionHistory from '@/components/TransactionHistory';
 import AddTransactionButton from '@/components/AddTransactionButton';
@@ -27,14 +26,13 @@ const Index: React.FC = () => {
           <BudgetSummary />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <ExpenseChart />
-            </div>
-            <div className="md:col-span-1">
               <FinancialInsights />
             </div>
+            <div className="md:col-span-1">
+              <BudgetGoalList />
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <BudgetGoalList />
+          <div className="grid grid-cols-1 gap-4">
             <TransactionHistory />
           </div>
         </main>
